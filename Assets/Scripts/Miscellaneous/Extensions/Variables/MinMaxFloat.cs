@@ -3,7 +3,7 @@
 namespace Miscellaneous.Extensions.Variables
 {
     [Serializable]
-    public class MinMaxFloat
+    public struct MinMaxFloat
     {
         public float min;
         public float max;

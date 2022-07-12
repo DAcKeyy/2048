@@ -1,22 +1,21 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Miscellaneous.Extensions.Variables;
 using Random = UnityEngine.Random;
 
 namespace _2048.Core
 {
     public class Board2048
     {
-        public readonly Dictionary<Vector2Int, Node2048> NodeGrid = new Dictionary<Vector2Int, Node2048>();
+        public Action<Node2048> NodeAdded = delegate(Node2048 node2048) {  };
+        public Action<Node2048> NodeRemoved = delegate(Node2048 node2048) {  };
+        public readonly Dictionary<Vector2UInt, Node2048> NodeGrid = new Dictionary<Vector2UInt, Node2048>();
+        private readonly Vector2UInt _boardBounds;
 
-        private readonly Vector2Int _boardBounds;
-
-        public Board2048(Vector2Int boardBounds)
+        public Board2048(Vector2UInt boardBounds)
         {
-            if (_boardBounds.x < 0 || _boardBounds.y < 0) 
-                throw new Exception("Board bounds values can't be less than zero");
-            
             _boardBounds = boardBounds;
             InstantiateBoard();
         }
@@ -24,8 +23,8 @@ namespace _2048.Core
         private void InstantiateBoard()
         {
             NodeGrid.Clear();
-            InstantiateNode((uint)Random.Range(0, _boardBounds.x), (uint)Random.Range(0, _boardBounds.y));
-            InstantiateNode((uint)Random.Range(0, _boardBounds.x), (uint)Random.Range(0, _boardBounds.y));
+            InitStartNodes((uint)Random.Range(1,3));
+            
             for (var column = 0; column < _boardBounds.x; column++)
             {
                 for (var row = 0; row < _boardBounds.y; row++)
@@ -35,32 +34,37 @@ namespace _2048.Core
             }
         }
     
-        private Node2048 InstantiateNode(uint x, uint y)
+        private bool InstantiateNode(uint x, uint y, out Node2048? node)
         {
-            //NodeGrid.Where(x => x.Key == new Vector2Int((int)x,y));
-            var position = new Vector2Int((int) x, (int) y);
-            var node = new Node2048(position, 2);
+            node = null;
             
-            NodeGrid.Add(position, node);
-            
-            return node;
+            var existNode = NodeGrid.FirstOrDefault(gridElem => gridElem.Key == new Vector2UInt(x,y));
+
+            if (existNode.Key == new Vector2UInt(x, y))
+            {
+                var position = new Vector2UInt(x, y);
+                node = new Node2048(position, (uint)Random.Range(2, 4));
+                AddNode(node);
+                return true;
+            }
+            else return false;
         }
 
-        private void MoveNode(ref Node2048 fromNode, Node2048 toNode)
+        private void MoveNode(ref Node2048 fromNode, Vector2UInt position)
         {
             
         }
         
-        public bool Combine(Node2048 fromNode, Node2048 toNode, out Node2048 newNode)
+        public bool Combine(Node2048 fromNode, Node2048 toNode, out Node2048? newNode)
         {
             if (fromNode.Value == toNode.Value)
             {
-                NodeGrid.Remove(toNode.Point);
-                NodeGrid.Remove(fromNode.Point);
+                RemoveNode(toNode);
+                RemoveNode(fromNode);
                 
-                newNode = new Node2048(toNode.Point, fromNode.Value + toNode.Value);
+                newNode = new Node2048(toNode.Position, fromNode.Value + toNode.Value);
                 
-                NodeGrid.Add(newNode.Point, newNode);
+                AddNode(newNode);
             }
 
             newNode = null;
@@ -90,6 +94,36 @@ namespace _2048.Core
             }
         }
 
+        private void AddNode(Node2048 newNode)
+        {
+            NodeGrid.Add(newNode.Position, newNode);
+            NodeAdded(newNode);
+        }
+        
+        private void RemoveNode(Node2048 node)
+        {
+            NodeGrid.Remove(node.Position);
+            NodeRemoved(node);
+        }
+
+        private void InitStartNodes(uint amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                if (true == InstantiateNode(
+                        (uint) Random.Range(0, _boardBounds.x),
+                        (uint) Random.Range(0, _boardBounds.y),
+                        out Node2048? node))
+                {
+                    NodeGrid.Add(node.Position, node);
+                }
+                else
+                {
+                    i--;
+                }
+            }
+        }
+        
         public bool CheckForGameOver()
         {
             bool isGameOver = true;
@@ -102,5 +136,9 @@ namespace _2048.Core
         }
         
         public enum Direction { Top, Right, Bottom, Left }
+        public struct BoardValues
+        {
+            
+        }
     }
 }
