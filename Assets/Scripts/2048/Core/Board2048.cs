@@ -83,64 +83,99 @@ namespace _2048.Core
             
             if (direction == Direction.Top)
             {
-                for (var x = BoardBounds.x - 1;
+                for (uint x = BoardBounds.x - 1;
                      x > 0;
                      x--)
+                for (uint y = BoardBounds.y - 1;
+                     y > 0;
+                     y--)
                 {
-                    for (var y = BoardBounds.y - 1;
-                         y > 0;
-                         y--)
+                    var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
+                    if(node == null) continue;
+                    
+                    Board2048 thisBoard = this;
+                    if (true == node.GetNeighbour(Direction.Top, in thisBoard, out var neighbourNode))
                     {
-                        var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
-                        if(node == null) continue;
-                        
-                        Board2048 thisBoard = this;
-                        if (true == node.GetNeighbour(Direction.Top, in thisBoard, out var neighbourNode))
-                        {
-                            MoveNode(ref node, new Vector2UInt(node.Position.x, neighbourNode.Position.y-1));
-                        }
-                        else
-                        {
-                            MoveNode(ref node, new Vector2UInt(node.Position.x, BoardBounds.y - 1));
-                        }
+                        MoveNode(ref node, new Vector2UInt(node.Position.x, neighbourNode.Position.y-1));
+                    }
+                    else
+                    {
+                        MoveNode(ref node, new Vector2UInt(node.Position.x, BoardBounds.y-1));
                     }
                 }
             }
             
             if (direction == Direction.Right)
             {
-                for (var y = BoardBounds.y - 1;
+                for (uint y = BoardBounds.y - 1;
                      y > 0;
                      y--)
+                for (uint x = BoardBounds.x - 1;
+                     x > 0;
+                     x--)
                 {
-                    for (var x = BoardBounds.x - 1;
-                         x > 0;
-                         x--)
+                    var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
+                    if(node == null) continue;
+                
+                    Board2048 thisBoard = this;
+                    if (true == node.GetNeighbour(Direction.Right, in thisBoard, out var neighbourNode))
                     {
-                        var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
-                        if(node == null) continue;
-                    
-                        Board2048 thisBoard = this;
-                        if (true == node.GetNeighbour(Direction.Right, in thisBoard, out var neighbourNode))
-                        {
-                            MoveNode(ref node, new Vector2UInt(neighbourNode.Position.x-1, node.Position.y));
-                        }
-                        else
-                        {
-                            MoveNode(ref node, new Vector2UInt(BoardBounds.x - 1, node.Position.y));
-                        }
+                        MoveNode(ref node, new Vector2UInt(neighbourNode.Position.x-1, node.Position.y));
+                    }
+                    else
+                    {
+                        MoveNode(ref node, new Vector2UInt(BoardBounds.x - 1, node.Position.y));
                     }
                 }
+                
             }
             
             if (direction == Direction.Bottom)
             {
-                
+                for (uint x = 0;
+                     x < BoardBounds.x - 1;
+                     x++)
+                for (uint y = 0;
+                     y < BoardBounds.y - 1;
+                     y++)
+                {
+                    var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
+                    if(node == null) continue;
+                    
+                    Board2048 thisBoard = this;
+                    if (true == node.GetNeighbour(Direction.Bottom, in thisBoard, out var neighbourNode))
+                    {
+                        MoveNode(ref node, new Vector2UInt(node.Position.x, neighbourNode.Position.y+1));
+                    }
+                    else
+                    {
+                        MoveNode(ref node, new Vector2UInt(node.Position.x, 0));
+                    }
+                }
             }
             
             if (direction == Direction.Left)
             {
+                for (uint y = 0;
+                     y < BoardBounds.y - 1;
+                     y++)
+                for (uint x = 0;
+                     x < BoardBounds.x - 1;
+                     x++)
+                {
+                    var node = NodeGrid.First(nodePos => nodePos.Position == new Vector2UInt(x, y));
+                    if(node == null) continue;
                 
+                    Board2048 thisBoard = this;
+                    if (true == node.GetNeighbour(Direction.Left, in thisBoard, out var neighbourNode))
+                    {
+                        MoveNode(ref node, new Vector2UInt(neighbourNode.Position.x+1, node.Position.y));
+                    }
+                    else
+                    {
+                        MoveNode(ref node, new Vector2UInt(0, node.Position.y));
+                    }
+                }
             }
         }
 
