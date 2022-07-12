@@ -9,14 +9,19 @@ namespace _2048.Core
 {
     public class Board2048
     {
+        public Dictionary<Vector2UInt, Node2048> NodeGrid { get; private set; }
+        public Vector2UInt BoardBounds { get; private set; }
+        
         public Action<Node2048> NodeAdded = delegate(Node2048 node2048) {  };
         public Action<Node2048> NodeRemoved = delegate(Node2048 node2048) {  };
-        public readonly Dictionary<Vector2UInt, Node2048> NodeGrid = new Dictionary<Vector2UInt, Node2048>();
-        private readonly Vector2UInt _boardBounds;
 
         public Board2048(Vector2UInt boardBounds)
         {
-            _boardBounds = boardBounds;
+            if (boardBounds.x == 0 || boardBounds.y == 0) 
+                throw new Exception("Board bounds too small");
+            
+            BoardBounds = boardBounds;
+            NodeGrid = new Dictionary<Vector2UInt, Node2048>();
             InstantiateBoard();
         }
         
@@ -25,9 +30,9 @@ namespace _2048.Core
             NodeGrid.Clear();
             InitStartNodes((uint)Random.Range(1,3));
             
-            for (var column = 0; column < _boardBounds.x; column++)
+            for (var column = 0; column < BoardBounds.x; column++)
             {
-                for (var row = 0; row < _boardBounds.y; row++)
+                for (var row = 0; row < BoardBounds.y; row++)
                 {
                     
                 }
@@ -37,7 +42,10 @@ namespace _2048.Core
         private bool InstantiateNode(uint x, uint y, out Node2048? node)
         {
             node = null;
-            
+
+            if (x >= BoardBounds.x) return false;
+            if (y >= BoardBounds.y) return false;
+                
             var existNode = NodeGrid.FirstOrDefault(gridElem => gridElem.Key == new Vector2UInt(x,y));
 
             if (existNode.Key == new Vector2UInt(x, y))
@@ -111,8 +119,8 @@ namespace _2048.Core
             for (int i = 0; i < amount; i++)
             {
                 if (true == InstantiateNode(
-                        (uint) Random.Range(0, _boardBounds.x),
-                        (uint) Random.Range(0, _boardBounds.y),
+                        (uint) Random.Range(0, BoardBounds.x),
+                        (uint) Random.Range(0, BoardBounds.y),
                         out Node2048? node))
                 {
                     NodeGrid.Add(node.Position, node);
@@ -136,9 +144,5 @@ namespace _2048.Core
         }
         
         public enum Direction { Top, Right, Bottom, Left }
-        public struct BoardValues
-        {
-            
-        }
     }
 }
