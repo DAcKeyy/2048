@@ -6,5 +6,11 @@ namespace _2048.Core
 	{
 		public uint? Value { get; private set; }
 		public Vector2Int Point { get; private set; }
+
+		public Node2048(Vector2Int position)
+		{
+			Point = position;
+			Value = 2; //TODO Magic number
+		}
 	}
 }
