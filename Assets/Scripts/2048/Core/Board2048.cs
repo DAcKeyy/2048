@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +34,7 @@ namespace _2048.Core
         public Node2048 InstantiateNode(uint x, uint y)
         {
             var position = new Vector2Int((int) x, (int) y);
-            var node = new Node2048(position);
+            var node = new Node2048(position, 2);
             
             NodeGrid.Add(position, node);
             
@@ -45,6 +44,22 @@ namespace _2048.Core
         private void MoveNode(ref Node2048 fromNode, Node2048 toNode)
         {
             
+        }
+        
+        public bool Combine(Node2048 fromNode, Node2048 toNode, out Node2048 newNode)
+        {
+            if (fromNode.Value == toNode.Value)
+            {
+                NodeGrid.Remove(toNode.Point);
+                NodeGrid.Remove(fromNode.Point);
+                
+                newNode = new Node2048(toNode.Point, fromNode.Value + toNode.Value);
+                
+                NodeGrid.Add(newNode.Point, newNode);
+            }
+
+            newNode = null;
+            return false;
         }
         
         public void Move(Direction direction)
