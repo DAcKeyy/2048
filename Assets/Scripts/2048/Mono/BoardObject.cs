@@ -5,8 +5,7 @@ namespace _2048.Mono
 {
 	public class BoardObject : MonoBehaviour
 	{
-		[SerializeField] private uint колонки;
-		[SerializeField] private uint строки;
+		[SerializeField] private Vector2Int _boardBounds;
 		
 		private Board2048 _boardData;
 		
@@ -17,7 +16,7 @@ namespace _2048.Mono
 
 		private void CreateBoard()
 		{
-			_boardData = new Board2048(колонки, строки);
+			_boardData = new Board2048(_boardBounds);
 			
 		}
 	}

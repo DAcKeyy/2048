@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _2048.Core
 {
@@ -7,32 +10,34 @@ namespace _2048.Core
     {
         public readonly Dictionary<Vector2Int, Node2048> NodeGrid = new Dictionary<Vector2Int, Node2048>();
 
-        private readonly uint _columns;
-        private readonly uint _rows;
+        private readonly Vector2Int _boardBounds;
 
-        public Board2048(uint columns, uint rows)
+        public Board2048(Vector2Int boardBounds)
         {
-            _columns = columns;
-            _rows = rows;
-
+            if (_boardBounds.x < 0 || _boardBounds.y < 0) 
+                throw new Exception("Board bounds values can't be less than zero");
+            
+            _boardBounds = boardBounds;
             InstantiateBoard();
         }
         
         private void InstantiateBoard()
         {
             NodeGrid.Clear();
-
-            for (var i = 0; i < _columns; i++)
+            InstantiateNode((uint)Random.Range(0, _boardBounds.x), (uint)Random.Range(0, _boardBounds.y));
+            InstantiateNode((uint)Random.Range(0, _boardBounds.x), (uint)Random.Range(0, _boardBounds.y));
+            for (var column = 0; column < _boardBounds.x; column++)
             {
-                for (var j = 0; j < _rows; j++)
+                for (var row = 0; row < _boardBounds.y; row++)
                 {
                     
                 }
             }
         }
     
-        public Node2048 InstantiateNode(uint x, uint y)
+        private Node2048 InstantiateNode(uint x, uint y)
         {
+            //NodeGrid.Where(x => x.Key == new Vector2Int((int)x,y));
             var position = new Vector2Int((int) x, (int) y);
             var node = new Node2048(position, 2);
             
@@ -85,6 +90,17 @@ namespace _2048.Core
             }
         }
 
+        public bool CheckForGameOver()
+        {
+            bool isGameOver = true;
+            foreach (var node in NodeGrid)
+            {
+                
+            }
+
+            return isGameOver;
+        }
+        
         public enum Direction { Top, Right, Bottom, Left }
     }
 }
