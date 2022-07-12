@@ -177,6 +177,8 @@ namespace _2048.Core
                     }
                 }
             }
+
+            if (CheckForGameOver()) GameOver();
         }
 
         private void AddNode(Node2048 newNode)
@@ -223,7 +225,7 @@ namespace _2048.Core
         
         public bool CheckForGameOver()
         {
-            bool isGameOver = true;
+            bool isAbleToPlay = false;
             
             if (NodeGrid.Count == BoardBounds.x * BoardBounds.y)
             {
@@ -231,15 +233,19 @@ namespace _2048.Core
                 foreach (var node in NodeGrid)
                 {
                     node.CheckPossibleCombinations(in thisBoard);
-                    /*
-                    foreach (var VARIABLE in COLLECTION)
+                    
+                    foreach (var cortage in node.PossibleCombinations)
                     {
-                        if(node.)
-                    }*/
+                        if (cortage.possibleNode != null)
+                        {
+                            isAbleToPlay = true;
+                            break;
+                        }
+                    }
+                    if(isAbleToPlay) break;
                 }
             }
-            
-            return isGameOver;
+            return !isAbleToPlay;
         }
         
         public enum Direction { Top, Right, Bottom, Left }

@@ -14,7 +14,9 @@ namespace _2048.Mono
 		public void SetNewData(Node2048 newNodeData)
 		{
 			_nodeData = newNodeData;
-			//TODO Логика вьшки ноды
+			SetColor(_nodeData.Value);
+			_nodeData.Moved += (Vector2 s) => Debug.Log("Двигаюсь");
+
 		}
 
 		private void SetColor(uint value)
